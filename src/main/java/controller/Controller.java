@@ -3,15 +3,12 @@ package controller;
 import model.Model;
 import model.applicant.Applicant;
 import model.applicant.ApplicantPool;
-import model.universities.BiologyUniversity;
-import model.universities.MathematicUniversity;
-import model.universities.University;
-import model.universities.VersatileUniversity;
+import model.boards.InspectionBoard;
 import view.View;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by Администратор on 19.05.2017.
@@ -27,16 +24,33 @@ public class Controller {
 
     public void process(){
         applicationPoolFill();
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
 
-        QueueProducer queueProducer = new QueueProducer(model.getApplicantPool(),
-                model.getApplicantQueue());
+        Producer producer = new Producer(model.getApplicantPool(), model.getApplicantQueue());
+        producer.setName("PRODUCER");
+        producer.start();
 
-        List<QueueConsumer> queueConsumers = new ArrayList<QueueConsumer>();
-        model.getUniversities().stream().forEach(university ->
-                queueConsumers.add(new QueueConsumer(queueProducer, university, model.getApplicantQueue())));
+        List<Consumer> consumers = new ArrayList<>();
 
-        queueProducer.start();
-        queueConsumers.stream().forEach(consumer -> consumer.start());
+        model.getInspectionBoards().stream().forEach(inspectionBoard ->
+                consumers.add(new Consumer(producer, inspectionBoard, model.getApplicantQueue())));
+
+        consumers.stream().forEach(executorService::submit);
+
+        try {
+            executorService.awaitTermination(1000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        for (InspectionBoard ib: model.getInspectionBoards()) {
+            System.out.println("InspectionBoard " + ib.getClass().getSimpleName() + "applied: " + ib.getAppliedList().size());
+        }
+
+
+        System.out.println("THE END" );
+        System.exit(0);
 
 
     }

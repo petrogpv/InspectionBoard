@@ -15,7 +15,7 @@ public class ApplicantPool {
     private ApplicantPool() {
         applicantPoolList = new LinkedList<Applicant>();
     }
-    public static ApplicantPool getAplicantPoolInstance (){
+    public static ApplicantPool getApplicantPoolInstance(){
         if(pool == null){
             return new ApplicantPool();
         }
@@ -26,7 +26,7 @@ public class ApplicantPool {
     }
 
     public Applicant getApplicant() {
-        return applicantPoolList.remove();
+        return applicantPoolList.poll();
     }
     public boolean isEmpty(){
         return applicantPoolList.isEmpty();

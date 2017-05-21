@@ -2,7 +2,7 @@ package model;
 
 import model.applicant.ApplicantPool;
 import model.applicant.ApplicantQueue;
-import model.universities.University;
+import model.boards.InspectionBoard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,22 +11,22 @@ import java.util.List;
  * Created by Администратор on 19.05.2017.
  */
 public class Model {
-    private List<University> universities;
+    private List<InspectionBoard> inspectionBoards;
     private ApplicantPool applicantPool;
     private ApplicantQueue applicantQueue;
 
     public Model() {
-        this.applicantPool = ApplicantPool.getAplicantPoolInstance();
+        this.applicantPool = ApplicantPool.getApplicantPoolInstance();
         this.applicantQueue = ApplicantQueue.getApplicantQueueInstance();
-        this.universities = new ArrayList<University>();
+        this.inspectionBoards = new ArrayList<>();
     }
 
-    public List<University> getUniversities() {
-        return universities;
+    public List<InspectionBoard> getInspectionBoards() {
+        return inspectionBoards;
     }
 
-    public void addUniversity(University university) {
-        universities.add(university);
+    public void addInspectionBoard(InspectionBoard inspectionBoard) {
+        inspectionBoards.add(inspectionBoard);
     }
 
     public ApplicantPool getApplicantPool() {

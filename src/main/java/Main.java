@@ -1,8 +1,8 @@
 import controller.Controller;
 import model.Model;
-import model.universities.BiologyUniversity;
-import model.universities.MathematicUniversity;
-import model.universities.VersatileUniversity;
+import model.boards.BiologyUniversityInspectionBoard;
+import model.boards.MathematicUniversityInspectionBoard;
+import model.boards.VersatileUniversityInspectionBoard;
 import view.View;
 
 /**
@@ -12,9 +12,9 @@ public class Main {
     public static void main(String[] args) {
 
         Model model = new Model();
-        model.addUniversity(new MathematicUniversity());
-        model.addUniversity(new BiologyUniversity());
-        model.addUniversity(new VersatileUniversity());
+        model.addInspectionBoard(new MathematicUniversityInspectionBoard());
+        model.addInspectionBoard(new BiologyUniversityInspectionBoard());
+        model.addInspectionBoard(new VersatileUniversityInspectionBoard());
 
         View view = new View();
         new Controller(model, view).process();
