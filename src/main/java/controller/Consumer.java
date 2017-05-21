@@ -2,58 +2,52 @@ package controller;
 
 import model.applicant.ApplicantQueue;
 import model.boards.InspectionBoard;
-
 import java.util.concurrent.Callable;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by Администратор on 19.05.2017.
  */
-public class Consumer implements Runnable {
+public class Consumer implements Callable<InspectionBoard> {
     private InspectionBoard inspectionBoard;
     private ApplicantQueue applicantQueue;
     private Thread queueProducer;
+    private Lock lock;
 
     public Consumer(Thread queueProducer, InspectionBoard inspectionBoard, ApplicantQueue applicantQueue) {
         this.queueProducer = queueProducer;
         this.inspectionBoard = inspectionBoard;
         this.applicantQueue = applicantQueue;
+        this.lock = applicantQueue.getLock();
     }
 
     @Override
-    public void run(){
+    public InspectionBoard call() {
         Thread.currentThread().setName(inspectionBoard.getClass().getSimpleName());
-        System.out.println("Consumer " + Thread.currentThread().getName());
 
-
-
-            while (true) {
-                synchronized (applicantQueue) {
-                while (applicantQueue.size() < 25 && queueProducer.isAlive()) {
+        while (true) {
+            lock.lock();
+                try {
+                    if (applicantQueue.size() < 25 && queueProducer.isAlive()) {
+                        continue;
+                    }
+                    if (applicantQueue.size() == 0 && !queueProducer.isAlive()) {
+                        return inspectionBoard;
+                    }
+                    inspectionBoard.apply(applicantQueue);
+                }finally {
+                    lock.unlock();
                     try {
-                        applicantQueue.wait(10);
+                        Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
 
-                if (applicantQueue.size() == 0 && !queueProducer.isAlive()) {
-                    System.out.println(Thread.currentThread().getName() + " is dead ");
-                    return;
-                }
 
-                System.out.println(Thread.currentThread().getName() + " applying ");
-                inspectionBoard.apply(applicantQueue);
-                applicantQueue.notifyAll();
 
-                    try {
-                        applicantQueue.wait(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-            }
         }
-
     }
+
 
 }

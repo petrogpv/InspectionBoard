@@ -17,7 +17,6 @@ public class BiologyUniversityInspectionBoard implements InspectionBoard {
             if (applicantQueue.checkNextApplicant().equals(Applicant.BIOLOGIST)){
                 appliedList.add(applicantQueue.getNextApplicant());
             }else {
-//                System.out.println("apply return works");
                 return;
             }
 

@@ -17,7 +17,6 @@ public class MathematicUniversityInspectionBoard implements InspectionBoard {
             if (applicantQueue.checkNextApplicant().equals(Applicant.MATHEMATICIAN)){
                 appliedList.add(applicantQueue.getNextApplicant());
             }else {
-//                System.out.println("apply return works");
                 return;
             }
 
